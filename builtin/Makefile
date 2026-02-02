@@ -1,14 +1,13 @@
-NAME = parse.a
-CFLAGS = 
-LIBS = -lreadline
+NAME = builtin.a
+CFLAGS =
 
-SRCS = parse.c free_token_list.c check_token_syntax.c create_cmds.c create_redirs.c
+SRCS = get_envp.c
 
 OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)
 
-$(NAME):  $(OBJS)
+$(NAME): $(OBJS)
 	ar rc $(NAME) $(CFLAGS) $(OBJS)
 
 clean:
