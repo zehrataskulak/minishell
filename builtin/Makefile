@@ -1,7 +1,7 @@
 NAME = builtin.a
 CFLAGS =
 
-SRCS = get_envp.c
+SRCS = builtin_functions.c get_envp.c pwd.c echo.c env.c
 
 OBJS = $(SRCS:.c=.o)
 
