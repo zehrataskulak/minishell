@@ -1,12 +1,14 @@
 #include "builtin.h"
 
-int env_builtin(char **cmd_argv, t_envp *env_list)
+int env_builtin(t_cmds *cmd, t_envp *env_list)
 {
     t_envp *tmp;
 
-    if(cmd_argv[1])
+    if(cmd->argv[1])
     {
-        printf("env: %s: No such file or directory\n", cmd_argv[1]);
+        write(2, "env: ", 5);
+        write(2, cmd->argv[1], ft_strlen(cmd->argv[1]));
+        write(2, ": No such file or directory\n", 28);
         return (127);
     }    
     tmp = env_list;
