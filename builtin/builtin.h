@@ -11,6 +11,8 @@ typedef struct s_envp{
     struct s_envp *next;
 } t_envp ;
 
+
+char	*find_env_value(t_envp *env, char *key);
 int ft_strcmp(const char *s1, const char *s2);
 int  find_equal_sign(char *str);
 int is_valid_identifier(char *arg);
