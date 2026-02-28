@@ -26,7 +26,7 @@ int check_exit_status(char *str, int is_parent, int *control)
     return (0);
 }
 
-int exit_builtin(t_cmds *cmd, int is_parent)
+int exit_builtin(t_cmds **cmd, t_envp **env, int is_parent)
 {
     int status;
     int i;
@@ -35,18 +35,18 @@ int exit_builtin(t_cmds *cmd, int is_parent)
     control = 0;
     status = 0;
     i = 0;
-    if(cmd->argv[1])
+    if((*cmd)->argv[1])
     {
-        status = check_exit_status(cmd->argv[1], is_parent, &control);
+        status = check_exit_status((*cmd)->argv[1], is_parent, &control);
         if(status != 255)
-            status = ft_atoi(cmd->argv[1]) % 256;
+            status = ft_atoi((*cmd)->argv[1]) % 256;
     }
     if (is_parent)
     {
         if(!control)
             write(2, "exit\n", 5);
-        //free_cmd_list();
-        //free_envp_list();
+        free_cmd_list(cmd);
+        free_envp_list(env);
         exit(status);
     }
     return status;

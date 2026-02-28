@@ -1,6 +1,6 @@
 #include "execute.h"
 
-int run_parent(t_cmds *cmd,t_envp **env)
+int run_parent(t_cmds **cmd,t_envp **env)
 {
     int backup_stdin;
     int backup_stdout;
@@ -17,7 +17,7 @@ int run_parent(t_cmds *cmd,t_envp **env)
         return (1);
     }
 
-    status = exec_builtin(cmd);
+    status = exec_builtin(cmd, env, 1);
 
     dup2(backup_stdin, STDIN_FILENO);
     dup2(backup_stdout, STDOUT_FILENO);
@@ -27,14 +27,14 @@ int run_parent(t_cmds *cmd,t_envp **env)
     return (status);
 }
 
-int run_child(t_cmds *cmd, t_envp **env)
+int run_child(t_cmds **cmd, t_envp **env)
 {
 
 }
 
-int execute_single(t_cmds *cmd, t_envp **env)
+int execute_single(t_cmds **cmd, t_envp **env)
 {
-    if(is_builtin(cmd->argv[0]))
+    if(is_builtin((*cmd)->argv[0]))
         run_parent(cmd, env);
     else
         run_child(cmd, env);
