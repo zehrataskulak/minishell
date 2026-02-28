@@ -64,7 +64,7 @@ void    print_sorted_envs(t_envp **env)
     len = 0;
     i = 0;
     env_arr = sort_env_arr(env);
-    tmp = env;
+    tmp = *env;
     while(tmp)
     {
         len++;
