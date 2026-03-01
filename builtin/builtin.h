@@ -29,5 +29,6 @@ int exit_builtin(t_cmds **cmd, t_envp **env, int is_parent);
 int cd_builtin(t_cmds *cmd, t_envp **env);
 int unset_builtin(t_cmds *cmd, t_envp **env);
 int export_builtin(t_cmds *cmd, t_envp **env);
+char **get_arr_env(t_envp *env);
 
 #endif
