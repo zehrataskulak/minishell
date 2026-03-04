@@ -95,8 +95,18 @@ int exec_external(t_cmds *cmd, t_envp *env)
         print_command_error(cmd->argv[0], status);
         exit(status);
     }
+    if (is_directory(path))
+    {
+        write(2, "minishell: ", 11);
+        write(2, path, ft_strlen(path));
+        write(2, ": Is a directory\n", 17);
+        free(path);
+        exit(126);
+    }
     arr_env = get_arr_env(env);
     execve(path, cmd->argv, arr_env);
-    perror("minishell");
-    exit (1);
+
+    free(path);
+    free_2d_arr(arr_env);
+    errno_handler();
 }

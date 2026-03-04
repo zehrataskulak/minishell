@@ -8,7 +8,7 @@ int run_parent(t_cmds **cmd, t_envp **env)
 
     backup_stdin = dup(STDIN_FILENO);
     backup_stdout = dup(STDOUT_FILENO);
-    if(redirections(cmd) < 0)
+    if(redirections(*cmd) < 0)
     {
         dup2(backup_stdin, STDIN_FILENO);
         dup2(backup_stdout, STDOUT_FILENO);
@@ -50,10 +50,10 @@ int run_child(t_cmds **cmd, t_envp **env)
     {
         waitpid(pid, &status, 0);
 
-        if ((status & 0xFF) == 0) // normal exit
-            return ((status >> 8) & 0xFF);
-        else if ((status & 0x7F) != 0) // sinyal ile öldü
-            return (128 + (status & 0x7F));
+        if (WIFEXITED(status)) // normal exit
+            return (WEXITSTATUS(status));
+        else if (WIFSIGNALED(status)) // sinyal ile öldü
+            return (128 + WTERMSIG(status));
     }
     return (1);
 }
