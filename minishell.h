@@ -14,6 +14,6 @@
 # include "execute/execute.h"
 
 void    set_signals_interactive(void);
-
+void set_signals_executing(void);
 
 #endif
