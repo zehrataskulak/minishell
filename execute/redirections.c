@@ -1,6 +1,6 @@
 #include "execute.h"
 
-int	redir_in(t_redirs *redir)
+static int	redir_in(t_redirs *redir)
 {
 	int	fd;
 
@@ -20,11 +20,11 @@ int	redir_in(t_redirs *redir)
 	return (0);
 }
 
-int	redir_out(t_redirs *redir)
+static int	redir_out(t_redirs *redir)
 {
 	int	fd;
 
-	fd = open(redir->target, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	fd = open(redir->target, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (fd < 0)
 	{
 		perror(redir->target);
@@ -40,11 +40,11 @@ int	redir_out(t_redirs *redir)
 	return (0);
 }
 
-int	redir_append(t_redirs *redir)
+static int	redir_append(t_redirs *redir)
 {
 	int	fd;
 
-	fd = open(redir->target, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	fd = open(redir->target, O_CREAT | O_WRONLY | O_APPEND, 0644);
 	if (fd < 0)
 	{
 		perror(redir->target);
@@ -57,6 +57,22 @@ int	redir_append(t_redirs *redir)
 		return (-1);
 	}
 	close(fd);
+	return (0);
+}
+
+static int	redir_heredoc(t_redirs *redir)
+{
+	if (redir->fd == -1)
+		return (-1);
+	if (dup2(redir->fd, STDIN_FILENO) < 0)
+	{
+		perror("dup2");
+		close(redir->fd);
+		redir->fd = -1;
+		return (-1);
+	}
+	close(redir->fd);
+	redir->fd = -1;
 	return (0);
 }
 
@@ -65,10 +81,12 @@ int	redirections(t_cmds *cmd)
 	t_redirs	*redir;
 	int			status;
 
+	if (!cmd)
+		return (0);
 	redir = cmd->redirs;
-	status = 0;
 	while (redir)
 	{
+		status = 0;
 		if (redir->type == REDIR_IN)
 			status = redir_in(redir);
 		else if (redir->type == REDIR_OUT)
@@ -76,7 +94,7 @@ int	redirections(t_cmds *cmd)
 		else if (redir->type == REDIR_APPEND)
 			status = redir_append(redir);
 		else if (redir->type == HEREDOC)
-			status = handle_heredoc(redir);
+			status = redir_heredoc(redir);
 		if (status != 0)
 			return (-1);
 		redir = redir->next;
