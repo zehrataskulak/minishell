@@ -3,7 +3,8 @@ CFLAGS =
 LIBS = 
 
 SRCS = exec_builtin.c exec_external_helper.c exec_external.c execute_non_single.c \
-		execute_single.c execute.c redirections.c heredoc.c
+		execute_single.c execute_non_single_helper1.c execute_non_single_helper2.c \
+		execute.c redirections.c heredoc.c
 
 OBJS = $(SRCS:.c=.o)
 
