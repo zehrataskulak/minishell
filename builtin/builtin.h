@@ -6,7 +6,7 @@
 /*   By: zzehra <zzehra@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 16:20:02 by zzehra            #+#    #+#             */
-/*   Updated: 2026/05/15 16:20:03 by zzehra           ###   ########.fr       */
+/*   Updated: 2026/05/15 22:13:28 by zzehra           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ typedef struct s_envp
 	char			*value;
 	struct s_envp	*next;
 }	t_envp;
+
+typedef struct s_cmds	t_cmds;
 
 char	*find_env_value(t_envp *env, char *key);
 char	*append_char(char *str, char c);
