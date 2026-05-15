@@ -1,4 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expander.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zzehra <zzehra@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/15 16:20:20 by zzehra            #+#    #+#             */
+/*   Updated: 2026/05/15 16:20:24 by zzehra           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtin.h"
+
+static int	is_special_quote_char(char c)
+{
+	return (c == '$' || c == '"' || c == '\\' || c == '`');
+}
 
 static int	handle_quotes(char c, char *quote, int *i)
 {
@@ -10,6 +27,27 @@ static int	handle_quotes(char c, char *quote, int *i)
 		return (0);
 	(*i)++;
 	return (1);
+}
+
+static char	*handle_backslash(char *str, int *i, char q, char *res)
+{
+	if (q == 0)
+	{
+		(*i)++;
+		if (str[*i])
+		{
+			res = append_char(res, str[*i]);
+			(*i)++;
+		}
+	}
+	else if (q == '"')
+	{
+		if (is_special_quote_char(str[*i + 1]))
+			(*i)++;
+		res = append_char(res, str[*i]);
+		(*i)++;
+	}
+	return (res);
 }
 
 static char	*process_word(char *str, t_envp *env, int stat)
@@ -26,7 +64,9 @@ static char	*process_word(char *str, t_envp *env, int stat)
 	{
 		if (handle_quotes(str[i], &q, &i))
 			continue ;
-		if (str[i] == '$' && q != '\'')
+		if (str[i] == '\\' && q != '\'')
+			res = handle_backslash(str, &i, q, res);
+		else if (str[i] == '$' && q != '\'')
 		{
 			tmp = expand_var(str, &i, env, stat);
 			res = append_str(res, tmp);

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec_builtin.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zzehra <zzehra@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/15 16:20:45 by zzehra            #+#    #+#             */
+/*   Updated: 2026/05/15 16:20:46 by zzehra           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "execute.h"
 
 int	exec_builtin(t_cmds **cmd, t_envp **env, int is_parent)
@@ -15,7 +27,7 @@ int	exec_builtin(t_cmds **cmd, t_envp **env, int is_parent)
 	else if (!ft_strcmp((*cmd)->argv[0], "unset"))
 		return (unset_builtin(*cmd, env));
 	else if (!ft_strcmp((*cmd)->argv[0], "env"))
-		return (env_builtin(*cmd, *env), 0);
+		return (env_builtin(cmd, env), 0);
 	else if (!ft_strcmp((*cmd)->argv[0], "exit"))
 		return (exit_builtin(cmd, env, is_parent));
 	return (0);

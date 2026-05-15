@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   create_cmds.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zzehra <zzehra@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/15 16:21:38 by zzehra            #+#    #+#             */
+/*   Updated: 2026/05/15 16:21:39 by zzehra           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parse.h"
 
 static int	is_redir(t_token_type type)
@@ -69,17 +81,18 @@ t_cmds	*create_cmd_list(t_tokens *tmp)
 	cmd->argv = NULL;
 	cmd->redirs = NULL;
 	cmd->next = NULL;
+	cmd->prev = NULL;
 	find_redirs(&cmd, tmp);
 	if (find_argv(&cmd, tmp))
-	{
-		free_redirs(&cmd->redirs);
-		free(cmd);
-		return (NULL);
-	}
+		return (free_redirs(&cmd->redirs), free(cmd), NULL);
 	pipe_ptr = tmp;
 	while (pipe_ptr && pipe_ptr->type != PIPE)
 		pipe_ptr = pipe_ptr->next;
 	if (pipe_ptr && pipe_ptr->next)
+	{
 		cmd->next = create_cmd_list(pipe_ptr->next);
+		if (cmd->next)
+			cmd->next->prev = cmd;
+	}
 	return (cmd);
 }

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zzehra <zzehra@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/15 16:20:02 by zzehra            #+#    #+#             */
+/*   Updated: 2026/05/15 16:20:03 by zzehra           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef BUILTIN_H
 # define BUILTIN_H
 
@@ -25,7 +37,7 @@ void	print_sorted_envs(t_envp **env);
 int		is_builtin(char *cmd);
 int		pwd_builtin(void);
 int		echo_builtin(t_cmds *cmd);
-int		env_builtin(t_cmds *cmd, t_envp *env_list);
+int		env_builtin(t_cmds **cmd, t_envp **env_list);
 int		exit_builtin(t_cmds **cmd, t_envp **env, int is_parent);
 int		cd_builtin(t_cmds *cmd, t_envp **env);
 int		unset_builtin(t_cmds *cmd, t_envp **env);

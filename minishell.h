@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zzehra <zzehra@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/15 16:21:56 by zzehra            #+#    #+#             */
+/*   Updated: 2026/05/15 16:21:56 by zzehra           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -14,5 +26,6 @@
 # include "execute/execute.h"
 
 void	set_signals_interactive(void);
-
+void	set_signals_heredoc(void);
+extern volatile sig_atomic_t	g_signal;
 #endif

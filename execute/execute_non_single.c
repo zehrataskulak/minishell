@@ -1,10 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execute_non_single.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zzehra <zzehra@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/15 16:21:03 by zzehra            #+#    #+#             */
+/*   Updated: 2026/05/15 16:21:04 by zzehra           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "execute.h"
 
 static void	update_parent_fds(t_cmds *cmd, int *prev_fd, int fd[2])
 {
 	if (*prev_fd != STDIN_FILENO)
 		close(*prev_fd);
-	if (!cmd->next)
+	if (!cmd || !cmd->next)
 		return ;
 	close(fd[1]);
 	*prev_fd = fd[0];
@@ -13,8 +25,6 @@ static void	update_parent_fds(t_cmds *cmd, int *prev_fd, int fd[2])
 static void	update_status_from_wait(pid_t pid, pid_t last_pid,
 	int status, int *last_status)
 {
-	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGPIPE)
-		write(2, " Broken pipe\n", 13);
 	if (pid != last_pid)
 		return ;
 	if (WIFEXITED(status))
@@ -39,28 +49,30 @@ static int	wait_all_children(pid_t last_pid)
 	return (last_status);
 }
 
-int	execute_non_single(t_cmds *cmd, t_envp **env)
+int	execute_non_single(t_cmds **cmd, t_envp **env)
 {
 	int		fd[2];
 	int		prev_fd;
 	pid_t	pid;
 	pid_t	last_pid;
+	t_cmds	*tmp;
 
+	tmp = *cmd;
 	prev_fd = STDIN_FILENO;
 	last_pid = -1;
-	while (cmd)
+	while (tmp)
 	{
-		if (cmd->next && pipe(fd) < 0)
+		if (tmp->next && pipe(fd) < 0)
 		{
 			perror("pipe");
 			return (1);
 		}
-		pid = create_child(cmd, env, prev_fd, fd);
+		pid = create_child(&tmp, env, prev_fd, fd);
 		if (pid < 0)
 			return (1);
-		update_parent_fds(cmd, &prev_fd, fd);
+		update_parent_fds(tmp, &prev_fd, fd);
 		last_pid = pid;
-		cmd = cmd->next;
+		tmp = tmp->next;
 	}
 	return (wait_all_children(last_pid));
 }

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zzehra <zzehra@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/15 16:21:53 by zzehra            #+#    #+#             */
+/*   Updated: 2026/05/15 16:21:53 by zzehra           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static int	handle_input(char *input, t_envp **my_env, int *last_status)
@@ -22,31 +34,55 @@ static int	handle_input(char *input, t_envp **my_env, int *last_status)
 	return (*last_status);
 }
 
-int	main(int ac, char **av, char **envp)
+static void	handle_signal_status(int *last_status)
+{
+	if (g_signal == SIGINT)
+	{
+		*last_status = 130;
+		g_signal = 0;
+	}
+}
+
+static void	process_input(char *input, t_envp **my_env, int *last_status)
+{
+	if (input[0] != '\0')
+	{
+		add_history(input);
+		*last_status = handle_input(input, my_env, last_status);
+	}
+}
+
+static int	minishell_loop(t_envp **my_env)
 {
 	char	*input;
+	int		last_status;
+
+	last_status = 0;
+	while (1)
+	{
+		input = readline("minishell$ ");
+		handle_signal_status(&last_status);
+		if (!input)
+			break ;
+		process_input(input, my_env, &last_status);
+		free(input);
+	}
+	return (last_status);
+}
+
+int	main(int ac, char **av, char **envp)
+{
 	t_envp	*my_env;
 	int		last_status;
 
 	(void)ac;
 	(void)av;
 	my_env = NULL;
-	last_status = 0;
 	get_envp(&my_env, envp);
 	set_signals_interactive();
-	while (1)
-	{
-		input = readline("minishell$ ");
-		if (!input)
-			break ;
-		if (input[0] != '\0')
-		{
-			add_history(input);
-			last_status = handle_input(input, &my_env, &last_status);
-		}
-		free(input);
-	}
+	last_status = minishell_loop(&my_env);
+	free_envp_list(&my_env);
 	if (isatty(STDIN_FILENO))
 		printf("exit\n");
-	return (free_envp_list(&my_env), last_status);
+	return (last_status);
 }
